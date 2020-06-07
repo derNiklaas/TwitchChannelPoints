@@ -3,7 +3,6 @@ const rconWebSocket = new WebSocket("ws://localhost:25576");
 
 const listenerObject = {
     "type": "LISTEN",
-    "nonce": "UwU",
     "data": {
         "topics": ["channel-points-channel-v1.ID"], // Replace ID with your twitch Channel ID.
         "auth_token": "AUTH TOKEN HERE" // Replace AUTH TOKEN HERE with your oauth token.
