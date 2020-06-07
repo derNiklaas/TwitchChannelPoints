@@ -51,8 +51,7 @@ function ping() {
  * @param username The display name of the user.
  * @param message (Optional) The message that the user enters.
  */
-function onReward(reward, username, message) {
-
+async function onReward(reward, username, message) {
     if (reward === "Text to Speech (DE)") {
         message = message.replace(/🎍 🎍/g, "🎍 ");
         textToSpeech("de-DE", username + " sagt " + message);
@@ -62,21 +61,22 @@ function onReward(reward, username, message) {
     } else if (reward === "[Minecraft] Regen + Nacht") {
         rconWebSocket.send("weather rain");
         rconWebSocket.send("time set 18000");
+        await sleep(50);
+        rconWebSocket.send("say §6" + username + "§r lässt es §6regnen§r und hat die Zeit vorgespult.")
+    } else if (reward === "[Minecraft] Regen") {
+        rconWebSocket.send("weather rain");
+        rconWebSocket.send("say §6" + username + "§r lässt es §6regnen§r.")
     } else if (reward === "[Minecraft] Tier spawnen") {
-        let animal = "";
-        const random = Math.floor(Math.random() * 4);
-        if (random === 0) {
-            animal = "Cow";
-        } else if (random === 1) {
-            animal = "Sheep";
-        } else if (random === 2) {
-            animal = "Pig";
-        } else {
-            animal = "Chicken";
-        }
-        rconWebSocket.send("summon " + animal + " -992 65 -962 {CustomName:§c" + username + "}");
+        let animal = ["Cow", "Sheep", "Pig", "Chicken"];
+        const random = Math.floor(Math.random() * animal.length);
+        let loc = await getLocation();
+        await sleep(50);
+        rconWebSocket.send("summon " + animal[random] + " " + loc[0] + " " + loc[1] + " " + loc[2] + " {CustomName:§c" + username + "}");
+        rconWebSocket.send("say §6" + username + "§r hat ein zufälliges Tier erschaffen.")
+    } else if (reward === "[Minecraft] Test") {
+        let loc = await getLocation();
+        console.log(loc);
     }
-
     if (message) {
         console.log(username + " used " + reward + " Message: " + message);
     } else {
@@ -92,3 +92,29 @@ function textToSpeech(lang, text) {
     msg.volume = 0.7;
     speechSynthesis.speak(msg);
 }
+
+let tpData = undefined;
+
+async function getLocation() {
+    tpData = undefined;
+    rconWebSocket.send("tp derNiklaas ~ ~ ~");
+
+    while (!tpData) {
+        await sleep(1);
+    }
+    return tpData;
+}
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+rconWebSocket.addEventListener('message', (message) => {
+    if (message.data.startsWith("Teleported")) {
+        let position = message.data.split("to ")[1];
+        const x = Math.floor(position.split(",")[0]);
+        const y = Math.floor(position.split(",")[1]);
+        const z = Math.floor(position.split(",")[2]);
+        tpData = [x, y, z];
+    }
+});
