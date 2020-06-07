@@ -68,14 +68,12 @@ async function onReward(reward, username, message) {
     } else if (reward === "[Minecraft] Tier spawnen") {
         let animal = ["Cow", "Sheep", "Pig", "Chicken"];
         const random = Math.floor(Math.random() * animal.length);
-        let loc = await getLocation();
+        let loc = await getLocation("derNiklaas");
         await sleep(50);
         rconWebSocket.send("summon " + animal[random] + " " + loc[0] + " " + loc[1] + " " + loc[2] + " {CustomName:§c" + username + "}");
         rconWebSocket.send("say §6" + username + "§r hat ein zufälliges Tier erschaffen.")
-    } else if (reward === "[Minecraft] Test") {
-        let loc = await getLocation();
-        console.log(loc);
     }
+
     if (message) {
         console.log(username + " used " + reward + " Message: " + message);
     } else {
