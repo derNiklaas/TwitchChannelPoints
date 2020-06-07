@@ -83,6 +83,12 @@ async function onReward(reward, username, message) {
     }
 }
 
+/**
+ * Say the specified language with an text to speech narrator in a given language.
+ *
+ * @param lang The language of the narrator
+ * @param text The text that should be said.
+ */
 function textToSpeech(lang, text) {
     const msg = new SpeechSynthesisUtterance();
     msg.lang = lang;
@@ -94,20 +100,6 @@ function textToSpeech(lang, text) {
 
 let tpData = undefined;
 
-async function getLocation() {
-    tpData = undefined;
-    rconWebSocket.send("tp derNiklaas ~ ~ ~");
-
-    while (!tpData) {
-        await sleep(1);
-    }
-    return tpData;
-}
-
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
-}
-
 rconWebSocket.addEventListener('message', (message) => {
     if (message.data.startsWith("Teleported")) {
         let position = message.data.split("to ")[1];
@@ -117,3 +109,27 @@ rconWebSocket.addEventListener('message', (message) => {
         tpData = [x, y, z];
     }
 });
+
+/**
+ * Gets the location of the specified player (player has to be online)
+ *
+ * @param username The username of the player
+ * @returns An array with the x, y, z coordinate of the player.
+ */
+async function getLocation(username) {
+    tpData = undefined;
+    rconWebSocket.send("tp " + username + " ~ ~ ~");
+
+    while (!tpData) {
+        await sleep(1);
+    }
+    return tpData;
+}
+
+/**
+ * Just a sleep method.
+ * @param ms the amount of milliseconds that the program should wait.
+ */
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+}
