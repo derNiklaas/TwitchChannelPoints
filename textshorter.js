@@ -1,6 +1,11 @@
+/**
+ * Removes multiple emojis after another and replaces it with only one
+ * @param text ... Text to remove access emojis from
+ * @returns modified text
+ */
 function emoji_spam_protec(text) {
     // const emoji_spam_detector = /(:\w*:\s*)+/; // We don't get the emojis with `:`, that would be too ez
-    let emoji_spam_detector = new RegExp('(\\p{Emoji}\\s*)+', 'ug'); // UTF-8 encoded Emojis
+    let emoji_spam_detector = /(\p{Emoji}\s*)+/ug; // UTF-8 encoded Emojis
     let match;
     let emoji_count = 0; // Count Doku :P
 
