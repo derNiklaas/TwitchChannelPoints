@@ -7,4 +7,4 @@
 # How to use this application
 You can simply open thee ``index.html`` file in your browser and it should connect to the twitch servers.
 
-NOTE: The default main.js file is my point rewards file. If you want to include your rewards, you have to change the ´`onReward`` function and test for your reward names. From my testing you can only send two rcon commands per tick. If you send more commands the rcon server could crash.
+NOTE: The default main.js file is my point rewards file. If you want to include your rewards, you have to change the ´`onReward`` function and test for your reward names.
