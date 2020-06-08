@@ -60,7 +60,6 @@ async function onReward(reward, username, message) {
     } else if (reward === "[Minecraft] Regen + Nacht") {
         rconWebSocket.send("weather rain");
         rconWebSocket.send("time set 18000");
-        await sleep(50);
         rconWebSocket.send("say §6" + username + "§r lässt es §6regnen§r und hat die Zeit vorgespult.")
     } else if (reward === "[Minecraft] Regen") {
         rconWebSocket.send("weather rain");
@@ -69,7 +68,6 @@ async function onReward(reward, username, message) {
         let animal = ["Cow", "Sheep", "Pig", "Chicken"];
         const random = Math.floor(Math.random() * animal.length);
         let loc = await getLocation("derNiklaas");
-        await sleep(50);
         rconWebSocket.send("summon " + animal[random] + " " + loc[0] + " " + loc[1] + " " + loc[2] + " {CustomName:§c" + username + "}");
         rconWebSocket.send("say §6" + username + "§r hat ein zufälliges Tier erschaffen.")
     }
@@ -119,7 +117,7 @@ async function getLocation(username) {
     rconWebSocket.send("tp " + username + " ~ ~ ~");
 
     while (!tpData) {
-        await sleep(1);
+        await sleep(25);
     }
     return tpData;
 }
