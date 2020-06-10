@@ -23,7 +23,7 @@ function emoji_spam_protec(text) {
         text = text.replace(replace_mes[i], replace_emoji[i]);
     }
 
-    if (emoji_count >= 1) {
+    if (emoji_count >= 5) {
         text += " emoji-spam smh";
     }
     return text;
