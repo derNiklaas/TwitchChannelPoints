@@ -17,6 +17,10 @@ twitchWebSocket.addEventListener('open', (open) => {
     login();
 });
 
+function login() {
+    twitchWebSocket.send(JSON.stringify(listenerObject));
+}
+
 twitchWebSocket.addEventListener('message', (message) => {
     let json = JSON.parse(message.data);
     if (json.type === "PONG") {
@@ -80,4 +84,3 @@ function textToSpeech(lang, text) {
     msg.volume = 0.7;
     speechSynthesis.speak(msg);
 }
-
