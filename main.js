@@ -81,26 +81,3 @@ function textToSpeech(lang, text) {
     speechSynthesis.speak(msg);
 }
 
-
-/**
- * Gets the location of the specified player (player has to be online)
- *
- * @param username The username of the player
- * @returns An array with the x, y, z coordinate of the player.
- */
-async function getLocation(username) {
-    tpData = undefined;
-    rconWebSocket.send("tp " + username + " ~ ~ ~");
-
-function login() {
-    const listenerObject = {
-        "type": "LISTEN",
-        "data": {
-            "topics": ["channel-points-channel-v1.124355754"],
-            "auth_token": "ptgxecwynacjbqfqdpw57vbsn97ro0"
-        }
-    };
-    //console.log(JSON.stringify(listenerObject));
-    twitchWebSocket.send(JSON.stringify(listenerObject));
-    ping();
-}
