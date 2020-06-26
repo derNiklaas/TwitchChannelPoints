@@ -1,5 +1,4 @@
 const twitchWebSocket = new WebSocket("wss://pubsub-edge.twitch.tv");
-const rconWebSocket = new WebSocket("ws://localhost:25576");
 
 const listenerObject = {
     "type": "LISTEN",
@@ -15,8 +14,7 @@ const pingObject = {
 
 twitchWebSocket.addEventListener('open', (open) => {
     console.log("logged in?");
-    twitchWebSocket.send(JSON.stringify(listenerObject));
-    ping();
+    login();
 });
 
 twitchWebSocket.addEventListener('message', (message) => {
@@ -53,23 +51,12 @@ function ping() {
 async function onReward(reward, username, message) {
     if (reward === "Text to Speech (DE)") {
         message = message.replace(/🎍 🎍/g, "🎍 ");
+        message = message.replace(/🎍🎍/g, "🎍");
         textToSpeech("de-DE", username + " sagt " + message);
     } else if (reward === "Text to Speech (EN)") {
         message = message.replace(/🎍 🎍/g, "🎍 ");
+        message = message.replace(/🎍🎍/g, "🎍");
         textToSpeech("en-US", username + " says " + message);
-    } else if (reward === "[Minecraft] Regen + Nacht") {
-        rconWebSocket.send("weather rain");
-        rconWebSocket.send("time set 18000");
-        rconWebSocket.send("say §6" + username + "§r lässt es §6regnen§r und hat die Zeit vorgespult.")
-    } else if (reward === "[Minecraft] Regen") {
-        rconWebSocket.send("weather rain");
-        rconWebSocket.send("say §6" + username + "§r lässt es §6regnen§r.")
-    } else if (reward === "[Minecraft] Tier spawnen") {
-        let animal = ["Cow", "Sheep", "Pig", "Chicken"];
-        const random = Math.floor(Math.random() * animal.length);
-        let loc = await getLocation("derNiklaas");
-        rconWebSocket.send("summon " + animal[random] + " " + loc[0] + " " + loc[1] + " " + loc[2] + " {CustomName:§c" + username + "}");
-        rconWebSocket.send("say §6" + username + "§r hat ein zufälliges Tier erschaffen.")
     }
 
     if (message) {
@@ -94,17 +81,6 @@ function textToSpeech(lang, text) {
     speechSynthesis.speak(msg);
 }
 
-let tpData = undefined;
-
-rconWebSocket.addEventListener('message', (message) => {
-    if (message.data.startsWith("Teleported")) {
-        let position = message.data.split("to ")[1];
-        const x = Math.floor(position.split(",")[0]);
-        const y = Math.floor(position.split(",")[1]);
-        const z = Math.floor(position.split(",")[2]);
-        tpData = [x, y, z];
-    }
-});
 
 /**
  * Gets the location of the specified player (player has to be online)
@@ -116,16 +92,15 @@ async function getLocation(username) {
     tpData = undefined;
     rconWebSocket.send("tp " + username + " ~ ~ ~");
 
-    while (!tpData) {
-        await sleep(25);
-    }
-    return tpData;
-}
-
-/**
- * Just a sleep method.
- * @param ms the amount of milliseconds that the program should wait.
- */
-function sleep(ms) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function login() {
+    const listenerObject = {
+        "type": "LISTEN",
+        "data": {
+            "topics": ["channel-points-channel-v1.124355754"],
+            "auth_token": "ptgxecwynacjbqfqdpw57vbsn97ro0"
+        }
+    };
+    //console.log(JSON.stringify(listenerObject));
+    twitchWebSocket.send(JSON.stringify(listenerObject));
+    ping();
 }
