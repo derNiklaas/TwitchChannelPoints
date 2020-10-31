@@ -19,10 +19,15 @@ twitchWebSocket.addEventListener('open', (open) => {
 
 function login() {
     twitchWebSocket.send(JSON.stringify(listenerObject));
+    ping();
 }
 
 twitchWebSocket.addEventListener('message', (message) => {
+    //console.log(message.data);
     let json = JSON.parse(message.data);
+    if (json.type === "RESPONSE" && json.error) {
+        console.log(`Error: ${json.error}`);
+    }
     if (json.type === "PONG") {
         console.log("Connection is okay!");
         return;
@@ -56,10 +61,20 @@ async function onReward(reward, username, message) {
     if (reward === "Text to Speech (DE)") {
         message = message.replace(/🎍 🎍/g, "🎍 ");
         message = message.replace(/🎍🎍/g, "🎍");
+
+        message = message.replace(/<volume[^>]*>|<\/volume>/gm, '');
+        message = message.replace(/<rate[^>]*>|<\/rate>/gm, '');
+        message = message.replace(/<pitch[^>]*>|<\/pitch>/gm, '');
+
         textToSpeech("de-DE", username + " sagt " + message);
     } else if (reward === "Text to Speech (EN)") {
         message = message.replace(/🎍 🎍/g, "🎍 ");
         message = message.replace(/🎍🎍/g, "🎍");
+
+        message = message.replace(/<volume[^>]*>|<\/volume>/gm, '');
+        message = message.replace(/<rate[^>]*>|<\/rate>/gm, '');
+        message = message.replace(/<pitch[^>]*>|<\/pitch>/gm, '');
+
         textToSpeech("en-US", username + " says " + message);
     }
 
